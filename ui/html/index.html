@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Electrician</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Basic CSS for demonstration */
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 960px;
+        margin: 20px auto;
+        padding: 20px;
+      }
+      .cta-button {
+        @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <header class="bg-blue-800 text-white py-4">
+      <div class="container mx-auto px-4">
+        <h1 class="text-2xl font-bold">Your Reliable Electrician</h1>
+      </div>
+    </header>
+
+    <section class="container mx-auto px-4 py-8">
+      <h2 class="text-xl font-bold mb-4">Our Services</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="font-semibold text-lg">Residential Wiring</h3>
+          <p>
+            Expert wiring for homes, including new construction and renovations.
+          </p>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="font-semibold text-lg">Commercial Installations</h3>
+          <p>Electrical solutions for businesses of all sizes.</p>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="font-semibold text-lg">Emergency Repairs</h3>
+          <p>24/7 emergency service for urgent electrical issues.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-gray-200 py-8">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="text-xl font-bold mb-4">Contact Us</h2>
+        <p>Get in touch for a free quote!</p>
+        <button
+          class="cta-button"
+          onclick="alert('Contact form would go here!')"
+        >
+          Request a Quote
+        </button>
+      </div>
+    </section>
+
+    <footer class="bg-gray-800 text-white py-4 text-center">
+      <p>&copy; 2023 Your Electrician</p>
+    </footer>
+
+    <script>
+      // Basic JavaScript for demonstration (e.g., handling form submissions)
+    </script>
+  </body>
+</html>
