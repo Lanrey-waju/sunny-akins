@@ -1,60 +1,39 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
-	"text/template"
+	"os"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-	log.Print("home handler called!")
-
-	ts, err := template.ParseFiles("./ui/html/index.html")
-	if err != nil {
-		log.Print(err.Error())
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	err = ts.Execute(w, nil)
-	log.Print(ts.Name())
-	if err != nil {
-		log.Print(err.Error())
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-	}
-}
-
-func sayBye(w http.ResponseWriter, r *http.Request) {
-	log.Print("satbye handler called!")
-	w.Write([]byte("Come back again!"))
-}
-
-func healthCheck(w http.ResponseWriter, r *http.Request) {
-	log.Print("healthCheck handler called!")
-	w.Write([]byte("API working good!"))
-}
-
-func contactMe(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-	}
-	log.Print("contact handler invoked")
-	w.Write([]byte("Send me a message!"))
+type application struct {
+	errorLog *log.Logger
+	infoLog  *log.Logger
 }
 
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/healthz", healthCheck)
-	mux.HandleFunc("GET /bye", sayBye)
-	mux.HandleFunc("POST /contact", contactMe)
+	addr := flag.String("addr", ":8080", "Http network address")
 
-	log.Print("Starting server on :8080")
-	err := http.ListenAndServe(":8080", mux)
-	if err != nil {
-		log.Fatal(err)
+	flag.Parse()
+
+	// create a logger for writing informational messages
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+
+	// create a logger for error messages
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	app := &application{
+		errorLog: errorLog,
+		infoLog:  infoLog,
 	}
+
+	srv := &http.Server{
+		Addr:     *addr,
+		ErrorLog: errorLog,
+		Handler:  app.routes(),
+	}
+	infoLog.Printf("Starting server on %s", *addr)
+	err := srv.ListenAndServe()
+	errorLog.Fatal(err)
 }
