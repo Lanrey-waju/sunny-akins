@@ -11,9 +11,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
-	log.Print("home handler called!")
 
-	ts, err := template.ParseFiles("./ui/html/index.html")
+	ts, err := template.ParseFiles("/Users/user/Documents/coding/sunny-akins/ui/html/index.html")
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -27,12 +26,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) sayBye(w http.ResponseWriter, r *http.Request) {
-	log.Print("satbye handler called!")
 	w.Write([]byte("Come back again!"))
 }
 
 func (app *application) healthCheck(w http.ResponseWriter, r *http.Request) {
-	log.Print("healthCheck handler called!")
 	w.Write([]byte("API working good!"))
 }
 
