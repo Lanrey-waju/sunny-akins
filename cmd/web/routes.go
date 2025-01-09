@@ -14,7 +14,6 @@ func (app *application) routes() http.Handler {
 
 	mux.HandleFunc("/", app.home)
 	mux.HandleFunc("/healthz", app.healthCheck)
-	mux.HandleFunc("GET /bye", app.sayBye)
 	mux.HandleFunc("POST /contact", app.contactMe)
 
 	standard := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
