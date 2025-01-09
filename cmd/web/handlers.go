@@ -25,19 +25,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *application) sayBye(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Come back again!"))
-}
-
 func (app *application) healthCheck(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("API working good!"))
 }
 
 func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", "POST")
-		app.clientError(w, http.StatusBadRequest)
-	}
 	log.Print("contact handler invoked")
 	w.Write([]byte("Send me a message!"))
 }
