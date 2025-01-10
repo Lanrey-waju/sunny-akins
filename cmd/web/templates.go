@@ -6,7 +6,8 @@ import (
 )
 
 type templateData struct {
-	Form any
+	CurrentYear int
+	Form        any
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {

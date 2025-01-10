@@ -1,28 +1,48 @@
-// JavaScript for handling form visibility and submission
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("contactForm");
   const button = document.getElementById("showContactForm");
 
-  // Single event listener for toggle with proper transition handling
+  // Toggle form visibility
   button?.addEventListener("click", () => {
-    if (form.classList.contains("show")) {
-      // Handle hiding
-      form.classList.remove("show");
-      button.textContent = "Request a Quote";
-    } else {
-      // Handle showing
-      form.classList.add("show");
-      button.textContent = "Hide Contact Form";
-    }
+    form.classList.toggle("show");
+    button.textContent = form.classList.contains("show")
+      ? "Hide Contact Form"
+      : "Request a Quote";
   });
+
+  // Clear error state for an input
+  const clearError = (input) => {
+    const errorSpan = input.parentElement.querySelector(".error-message");
+    if (errorSpan) {
+      errorSpan.remove();
+    }
+    input.classList.remove("border-red-500");
+  };
+
+  // Show error for an input
+  const showError = (input, message) => {
+    clearError(input);
+    input.classList.add("border-red-500");
+    const errorSpan = document.createElement("span");
+    errorSpan.className = "error-message text-red-500 text-sm mt-1";
+    errorSpan.textContent = message;
+    input.parentElement.appendChild(errorSpan);
+  };
+
+  // Clear all errors
+  const clearAllErrors = () => {
+    form.querySelectorAll("input, textarea").forEach(clearError);
+  };
 
   // Form submission handler
   window.submitForm = function (event) {
     event.preventDefault();
-    const formData = new FormData(form);
+    clearAllErrors();
 
-    // Disable submit button to prevent double submission
+    const formData = new FormData(form);
     const submitButton = form.querySelector('button[type="submit"]');
+
+    // Disable submit button
     submitButton.disabled = true;
     submitButton.classList.add("opacity-50");
 
@@ -33,19 +53,37 @@ document.addEventListener("DOMContentLoaded", () => {
         Accept: "application/json",
       },
     })
-      .then((response) => {
-        if (response.redirected) {
-          window.location.href = response.url;
-          return;
-        }
+      .then(async (response) => {
+        const data = await response.json();
 
         if (response.ok) {
-          // If no redirect, handle success manually
+          // Success case
           alert("Message sent successfully!");
           form.reset();
           form.classList.remove("show");
           button.textContent = "Request a Quote";
           window.location.href = "/";
+        } else if (response.status === 422) {
+          // Validation errors
+          if (data.errors) {
+            // Display each error
+            Object.entries(data.errors).forEach(([field, message]) => {
+              const input = form.querySelector(`[name="${field}"]`);
+              if (input) {
+                showError(input, message);
+              }
+            });
+
+            // Repopulate form if needed
+            if (data.formData) {
+              Object.entries(data.formData).forEach(([field, value]) => {
+                const input = form.querySelector(`[name="${field}"]`);
+                if (input) {
+                  input.value = value;
+                }
+              });
+            }
+          }
         } else {
           throw new Error("Form submission failed");
         }
@@ -60,4 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
         submitButton.classList.remove("opacity-50");
       });
   };
+
+  // Clear errors when user starts typing
+  form.querySelectorAll("input, textarea").forEach((input) => {
+    input.addEventListener("input", () => clearError(input));
+  });
 });

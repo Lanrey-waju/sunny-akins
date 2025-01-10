@@ -2,8 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"html/template"
-	"log"
 	"net/http"
 	"strings"
 
@@ -12,46 +10,76 @@ import (
 	"github.com/Lanrey-waju/sunny-akinns/internal/database"
 )
 
+type createContactForm struct {
+	Name        string
+	Email       string
+	Message     string
+	FieldErrors map[string]string
+}
+
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		app.notFound(w)
 		return
 	}
 
-	files := []string{
-		"/Users/user/Documents/coding/sunny-akins/ui/html/base.html",
-		"/Users/user/Documents/coding/sunny-akins/ui/html/index.html",
-	}
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
+	form := createContactForm{}
+	data := app.newTemplateData(r)
+	data.Form = form
 
-	err = ts.ExecuteTemplate(w, "base", nil)
-	log.Print(ts.Name())
-	if err != nil {
-		app.serverError(w, err)
-	}
-}
-
-func (app *application) healthCheck(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("API working good!"))
+	app.render(w, http.StatusOK, "index.html", data)
 }
 
 func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		app.serverError(w, err)
+		app.clientError(w, http.StatusBadRequest)
 	}
-	name := r.PostForm.Get("name")
-	email := r.PostForm.Get("email")
-	content := r.PostForm.Get("content")
+
+	form := createContactForm{
+		Name:        r.PostForm.Get("name"),
+		Email:       r.PostForm.Get("email"),
+		Message:     r.PostForm.Get("content"),
+		FieldErrors: map[string]string{},
+	}
+
+	// Validate form fields
+	if strings.TrimSpace(form.Name) == "" {
+		form.FieldErrors["name"] = "This field cannot be blank"
+	} else {
+		form.FieldErrors["name"] = "This field cannot be more than 50 characters long"
+	}
+
+	if strings.TrimSpace(form.Message) == "" {
+		form.FieldErrors["content"] = "This field cannot be blank"
+	}
+
+	// if there are validation errors
+	if len(form.FieldErrors) > 0 {
+		if accepts := r.Header.Get("Accept"); strings.Contains(accepts, "application/json") {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status": "error",
+				"errors": form.FieldErrors,
+				"formData": map[string]string{
+					"name":    form.Name,
+					"email":   form.Email,
+					"content": form.Message,
+				},
+			})
+			return
+		}
+
+		data := app.newTemplateData(r)
+		data.Form = form
+		app.render(w, http.StatusUnprocessableEntity, "index.html", data)
+	}
 
 	contact, err := app.db.CreateContact(r.Context(), database.CreateContactParams{
 		ID:      uuid.New(),
-		Name:    name,
-		Email:   email,
-		Message: content,
+		Name:    form.Name,
+		Email:   form.Email,
+		Message: form.Message,
 	})
 	if err != nil {
 		app.serverError(w, err)
