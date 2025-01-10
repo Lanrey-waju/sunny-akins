@@ -12,13 +12,29 @@ body {
 .cta-button {
   @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
 }
+/* Add this to your existing CSS */
 #contactForm {
-  display: none;
+  visibility: hidden;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0s linear 0.3s,
+    max-height 0.3s ease;
 }
 
 #contactForm.show {
-  display: block;
+  visibility: visible;
   opacity: 1;
+  max-height: 1000px; /* Adjust based on your form's maximum height */
+  transition:
+    opacity 0.3s ease,
+    visibility 0s linear 0s,
+    max-height 0.3s ease;
+}
+
+/* Optional: Add smooth transition for the button text */
+#showContactForm {
+  transition: background-color 0.2s ease;
 }
