@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"text/template"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -25,10 +26,11 @@ type config struct {
 }
 
 type application struct {
-	config   config
-	errorLog *log.Logger
-	infoLog  *log.Logger
-	db       *database.Queries
+	config        config
+	errorLog      *log.Logger
+	infoLog       *log.Logger
+	db            *database.Queries
+	templateCache map[string]*template.Template
 }
 
 // openDB opens and verifies a connection to a database
@@ -78,11 +80,18 @@ func main() {
 
 	dbQueries := database.New(db)
 
+	// initialize a new template cache
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		errorLog.Fatalln(err)
+	}
+
 	app := &application{
-		config:   cfg,
-		errorLog: errorLog,
-		infoLog:  infoLog,
-		db:       dbQueries,
+		config:        cfg,
+		errorLog:      errorLog,
+		infoLog:       infoLog,
+		db:            dbQueries,
+		templateCache: templateCache,
 	}
 
 	srv := &http.Server{
