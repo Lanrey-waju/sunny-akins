@@ -12,3 +12,13 @@ body {
 .cta-button {
   @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
 }
+#contactForm {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#contactForm.show {
+  display: block;
+  opacity: 1;
+}

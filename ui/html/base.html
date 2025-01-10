@@ -1,0 +1,29 @@
+{{define "base"}}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{template "title" .}} - Sunny Akins</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <header class="bg-blue-800 text-white py-4">
+      <div class="container mx-auto px-4">
+        <h1 class="text-2xl font-bold">Sunny Akins Electricals</h1>
+      </div>
+    </header>
+
+    <main>{{template "main" .}}</main>
+
+    <script src="/static/js/script.js">
+      // Basic JavaScript for demonstration (e.g., handling form submissions)
+    </script>
+  </body>
+
+  <footer class="bg-gray-800 text-white py-4 text-center">
+    <p>&copy; 2025 Your Electrician</p>
+  </footer>
+</html>
+{{end}}

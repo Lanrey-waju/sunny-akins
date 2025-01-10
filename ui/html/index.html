@@ -3,17 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your Electrician</title>
+    {{define "title"}}Home{{end}}
     <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body class="bg-gray-100">
-    <header class="bg-blue-800 text-white py-4">
-      <div class="container mx-auto px-4">
-        <h1 class="text-2xl font-bold">Sunny Akins Electricals</h1>
-      </div>
-    </header>
-
+  {{define "main"}}
     <section class="container mx-auto px-4 py-8">
       <h2 class="text-xl font-bold mb-4">Our Services</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -40,17 +34,78 @@
         <h2 class="text-xl font-bold mb-4">Contact Us</h2>
         <p>Get in touch for a free quote!</p>
         <button
-          class="cta-button"
-          onclick="alert('Contact form would go here!')"
-        >
+          id="showContactForm">
           Request a Quote
         </button>
+        
+      <div class="w-full max-w-md mx-auto">
+        <form
+          class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
+          id="contactForm"
+          action="/contact/post"
+          method="POST"
+        >
+          <div class="mb-4">
+            <label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              for="name"
+            >
+              Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Enter your name"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              for="email"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              for="content"
+            >
+              Message
+            </label>
+            <textarea
+              name="content"
+              id="content"
+              rows="4"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Write your message here"
+              required
+            ></textarea>
+          </div>
+          <div class="flex items-center justify-between">
+            <button
+              type="submit"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Contact Me
+            </button>
+          </div>
+        </form>
       </div>
+    </div>
     </section>
-
-    <footer class="bg-gray-800 text-white py-4 text-center">
-      <p>&copy; 2025 Your Electrician</p>
-    </footer>
+  {{end}}
 
     <script>
       // Basic JavaScript for demonstration (e.g., handling form submissions)

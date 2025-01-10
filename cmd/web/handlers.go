@@ -12,13 +12,17 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ts, err := template.ParseFiles("/Users/user/Documents/coding/sunny-akins/ui/html/index.html")
+	files := []string{
+		"/Users/user/Documents/coding/sunny-akins/ui/html/base.html",
+		"/Users/user/Documents/coding/sunny-akins/ui/html/index.html",
+	}
+	ts, err := template.ParseFiles(files...)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	err = ts.Execute(w, nil)
+	err = ts.ExecuteTemplate(w, "base", nil)
 	log.Print(ts.Name())
 	if err != nil {
 		app.serverError(w, err)
