@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 
-	"github.com/Lanrey-waju/sunny-akinns/internal/database"
+	"github.com/Lanrey-waju/sunny-akins/internal/database"
 )
 
 type createContactForm struct {
@@ -45,7 +46,7 @@ func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 	// Validate form fields
 	if strings.TrimSpace(form.Name) == "" {
 		form.FieldErrors["name"] = "This field cannot be blank"
-	} else {
+	} else if utf8.RuneCountInString(form.Name) > 50 {
 		form.FieldErrors["name"] = "This field cannot be more than 50 characters long"
 	}
 
@@ -73,6 +74,7 @@ func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 		data := app.newTemplateData(r)
 		data.Form = form
 		app.render(w, http.StatusUnprocessableEntity, "index.html", data)
+		return
 	}
 
 	contact, err := app.db.CreateContact(r.Context(), database.CreateContactParams{
@@ -83,6 +85,7 @@ func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		app.serverError(w, err)
+		return
 	}
 
 	app.infoLog.Printf("%v created and saved successfully!", contact)
