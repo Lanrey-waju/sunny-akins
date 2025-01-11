@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"path/filepath"
 	"text/template"
 )
@@ -22,6 +23,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 
 		files := []string{
 			"../../ui/html/base.html",
+			"../../ui/html/partials/contact_form.html",
 			page,
 		}
 		ts, err := template.ParseFiles(files...)
@@ -29,6 +31,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 			return nil, err
 		}
 
+		fmt.Println(name)
 		cache[name] = ts
 	}
 

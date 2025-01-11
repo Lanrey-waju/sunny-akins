@@ -12,9 +12,11 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/alexedwards/scs/postgresstore"
+	scs "github.com/alexedwards/scs/v2"
 	_ "github.com/lib/pq"
 
-	"github.com/Lanrey-waju/sunny-akinns/internal/database"
+	"github.com/Lanrey-waju/sunny-akins/internal/database"
 )
 
 // config will hold environment specific variables
@@ -26,11 +28,12 @@ type config struct {
 }
 
 type application struct {
-	config        config
-	errorLog      *log.Logger
-	infoLog       *log.Logger
-	db            *database.Queries
-	templateCache map[string]*template.Template
+	config         config
+	errorLog       *log.Logger
+	infoLog        *log.Logger
+	db             *database.Queries
+	templateCache  map[string]*template.Template
+	sessionManager *scs.SessionManager
 }
 
 // openDB opens and verifies a connection to a database
@@ -86,12 +89,18 @@ func main() {
 		errorLog.Fatalln(err)
 	}
 
+	// initialize a new session manager
+	sessionManager := scs.New()
+	sessionManager.Store = postgresstore.New(db)
+	sessionManager.Lifetime = 12 * time.Hour
+
 	app := &application{
-		config:        cfg,
-		errorLog:      errorLog,
-		infoLog:       infoLog,
-		db:            dbQueries,
-		templateCache: templateCache,
+		config:         cfg,
+		errorLog:       errorLog,
+		infoLog:        infoLog,
+		db:             dbQueries,
+		templateCache:  templateCache,
+		sessionManager: sessionManager,
 	}
 
 	srv := &http.Server{
