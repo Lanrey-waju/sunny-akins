@@ -53,3 +53,22 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 
 	buf.WriteTo(w)
 }
+
+func (app *application) renderPartial(
+	w http.ResponseWriter,
+	page string,
+	templateString string,
+	data *templateData,
+) {
+	ts, ok := app.templateCache[page]
+	if !ok {
+		err := fmt.Errorf("the template %s does not exist", page)
+		app.serverError(w, err)
+		return
+	}
+
+	err := ts.ExecuteTemplate(w, templateString, data)
+	if err != nil {
+		app.serverError(w, err)
+	}
+}

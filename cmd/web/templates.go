@@ -9,12 +9,13 @@ import (
 type templateData struct {
 	CurrentYear int
 	Form        any
+	Flash       string
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
-	pages, err := filepath.Glob("../../ui/html/*.html")
+	pages, err := filepath.Glob("../../ui/html/pages/*.html")
 	if err != nil {
 		return nil, err
 	}
@@ -23,8 +24,9 @@ func newTemplateCache() (map[string]*template.Template, error) {
 
 		files := []string{
 			"../../ui/html/base.html",
-			"../../ui/html/partials/contact_form.html",
 			page,
+			"../../ui/html/partials/contact_form.html",
+			"../../ui/html/partials/flash.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

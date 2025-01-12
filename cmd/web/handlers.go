@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 	"strings"
 	"unicode/utf8"
@@ -11,7 +10,7 @@ import (
 	"github.com/Lanrey-waju/sunny-akins/internal/database"
 )
 
-type createContactForm struct {
+type ContactCreateForm struct {
 	Name        string
 	Email       string
 	Message     string
@@ -24,7 +23,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	form := createContactForm{}
+	form := ContactCreateForm{}
 	data := app.newTemplateData(r)
 	data.Form = form
 
@@ -34,9 +33,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		app.clientError(w, http.StatusBadRequest)
+		return
 	}
 
-	form := createContactForm{
+	form := ContactCreateForm{
 		Name:        r.PostForm.Get("name"),
 		Email:       r.PostForm.Get("email"),
 		Message:     r.PostForm.Get("content"),
@@ -54,26 +54,10 @@ func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 		form.FieldErrors["content"] = "This field cannot be blank"
 	}
 
-	// if there are validation errors
 	if len(form.FieldErrors) > 0 {
-		if accepts := r.Header.Get("Accept"); strings.Contains(accepts, "application/json") {
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusUnprocessableEntity)
-			json.NewEncoder(w).Encode(map[string]interface{}{
-				"status": "error",
-				"errors": form.FieldErrors,
-				"formData": map[string]string{
-					"name":    form.Name,
-					"email":   form.Email,
-					"content": form.Message,
-				},
-			})
-			return
-		}
-
 		data := app.newTemplateData(r)
 		data.Form = form
-		app.render(w, http.StatusUnprocessableEntity, "index.html", data)
+		app.renderPartial(w, "index.html", "form", data)
 		return
 	}
 
@@ -90,16 +74,17 @@ func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 
 	app.infoLog.Printf("%v created and saved successfully!", contact)
 
-	if accepts := r.Header.Get("Accept"); strings.Contains(accepts, "application/json") {
-		// Return JSON response for fetch requests
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]string{
-			"status":  "success",
-			"message": "Form submitted successfully",
-		})
-	} else {
-		// Redirect for traditional form submissions
-		http.Redirect(w, r, "/", http.StatusSeeOther) // 303 See Other
+	data := app.newTemplateData(r)
+	data.Form = ContactCreateForm{}
+	data.Flash = "Thank You! We will get in touch."
+	app.renderPartial(w, "index.html", "flash", data)
+}
+
+func (app *application) showForm(w http.ResponseWriter, r *http.Request) {
+	data := app.newTemplateData(r)
+	data.Form = ContactCreateForm{}
+	if r.Header.Get("HX-Request") == "true" {
+		app.renderPartial(w, "index.html", "form", data)
+		return
 	}
 }

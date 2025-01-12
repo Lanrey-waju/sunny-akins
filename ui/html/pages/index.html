@@ -1,4 +1,4 @@
-{{template "base" .}} {{define "title"}}Home{{end}} {{define "main"}}
+{{define "title"}}Home - Sunny Akins{{end}} {{define "main"}}
 <section class="container mx-auto px-4 py-8">
   <h2 class="text-xl font-bold mb-4">Our Services</h2>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -24,13 +24,20 @@
   <div class="container mx-auto px-4 text-center">
     <p>Get in touch for a free quote!</p>
     <button
-      id="showContactForm"
+      hx-get="/form"
+      hx-target="#formContainer"
+      hx-swap="innerHTML"
       type="button"
       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
     >
       Request a Quote
     </button>
-    {{template "form" .}}
+    <div id="flashMessage">
+      {{if .Flash }}
+      <div class="alert">{{.Flash}}</div>
+      {{end}}
+    </div>
+    <div id="formContainer"></div>
   </div>
 </section>
 {{end}}

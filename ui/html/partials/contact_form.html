@@ -3,18 +3,24 @@
   <form
     class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
     id="contactForm"
-    action="/contact/post"
+    hx-post="/contact/post"
+    hx-target="#formContainer"
+    hx-swap="innerHTML"
     method="POST"
   >
     <div class="mb-4">
       <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
         Name
       </label>
+      {{with .Form.FieldErrors.name}}
+      <label for="" class="error">{{.}}</label>
+      {{end}}
       <input
         type="text"
         name="name"
         id="name"
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        value="{{.Form.Name}}"
         required
       />
     </div>
@@ -28,19 +34,25 @@
         id="email"
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         required
+        value="{{.Form.Email}}"
       />
     </div>
     <div class="mb-6">
       <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
         Message
       </label>
+      {{with .Form.FieldErrors.content}}
+      <label for="" class="errors">{{.}}</label>
+      {{end}}
       <textarea
         name="content"
         id="content"
         rows="4"
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         required
-      ></textarea>
+      >
+{{.Form.Message}}</textarea
+      >
     </div>
     <div class="flex items-center justify-between">
       <button

@@ -1,10 +1,10 @@
-{{define "base"}}
+{{block "base" .}}
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{template "title" .}} - Sunny Akins</title>
+    <title>{{block "title" .}} - Sunny Akins{{end}}</title>
     <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
@@ -14,6 +14,7 @@
         <h1 class="text-2xl font-bold">Sunny Akins Electricals</h1>
       </div>
     </header>
+    <div class="flashMessage">{{block "flash" .}}{{end}}</div>
 
     <main>{{template "main" .}}</main>
 

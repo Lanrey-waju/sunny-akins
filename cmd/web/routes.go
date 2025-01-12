@@ -12,10 +12,9 @@ func (app *application) routes() http.Handler {
 	fileServer := http.FileServer(http.Dir("../../ui/static/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
-	dynamic := alice.New(app.sessionManager.LoadAndSave)
-
-	mux.Handle("/", dynamic.ThenFunc(app.home))
-	mux.Handle("POST /contact/post", dynamic.ThenFunc(app.contactMe))
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("POST /contact/post", app.contactMe)
+	mux.HandleFunc("GET /form", app.showForm)
 
 	standard := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
 
