@@ -88,3 +88,10 @@ func (app *application) showForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (app *application) closeFlashMessage(w http.ResponseWriter, r *http.Request) {
+	data := app.newTemplateData(r)
+	data.Form = ContactCreateForm{}
+	w.WriteHeader(http.StatusOK)
+	app.renderPartial(w, "index.html", "close-flash", data)
+}
