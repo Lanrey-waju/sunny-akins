@@ -27,7 +27,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 	data.Form = form
 
-	app.render(w, http.StatusOK, "index.html", data)
+	if r.Header.Get("HX-Request") == "true" {
+		app.renderPartial(w, "index.html", "main", data)
+	} else {
+		app.render(w, http.StatusOK, "index.html", data)
+	}
 }
 
 func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
@@ -94,4 +98,18 @@ func (app *application) closeFlashMessage(w http.ResponseWriter, r *http.Request
 	data.Form = ContactCreateForm{}
 	w.WriteHeader(http.StatusOK)
 	app.renderPartial(w, "index.html", "close-flash", data)
+}
+
+func (app *application) aboutPage(w http.ResponseWriter, r *http.Request) {
+	data := app.newTemplateData(r)
+	data.Form = ContactCreateForm{}
+
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Push-Url", "/about")
+		w.Header().Set("HX-Title", "About Us - Sunny Akins")
+		app.renderPartial(w, "about.html", "main", data)
+
+	} else {
+		app.render(w, http.StatusOK, "about.html", data)
+	}
 }

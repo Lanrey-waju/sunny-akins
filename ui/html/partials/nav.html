@@ -1,0 +1,28 @@
+{{define "nav"}}
+<nav>
+  <ul class="flex space-x-4">
+    <li>
+      <a
+        hx-get="/"
+        hx-target="#main-content"
+        hx-target="#main-content"
+        hx-push-url="true"
+        class="text-white hover:text-gray-100 font-semibold transition-colors"
+      >
+        Home
+      </a>
+    </li>
+    <li>
+      <a
+        hx-get="/about"
+        hx-target="#main-content"
+        hx-push-url="true"
+        hx-swap="innerHTML"
+        class="text-white hover:text-gray-100 font-semibold transition-colors"
+      >
+        About
+      </a>
+    </li>
+  </ul>
+</nav>
+{{end}}

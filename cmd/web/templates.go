@@ -24,6 +24,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 
 		files := []string{
 			"../../ui/html/base.html",
+			"../../ui/html/partials/nav.html",
 			page,
 			"../../ui/html/partials/contact_form.html",
 			"../../ui/html/partials/flash.html",

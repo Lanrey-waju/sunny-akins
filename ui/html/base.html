@@ -1,22 +1,24 @@
-{{block "base" .}}
+{{define "base"}}
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{block "title" .}} - Sunny Akins{{end}}</title>
+    <meta name="htmx-config" content='("settitleoninnerhtml":true)' />
+    <title>{{template "title" .}} - Sunny Akins</title>
     <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="bg-gray-100">
-    <header class="bg-blue-800 text-white py-4">
+    <header class="bg-blue-800 text-white py-4 shadow-md">
       <div class="container mx-auto px-4">
         <h1 class="text-2xl font-bold">Sunny Akins Electricals</h1>
+        {{template "nav" .}}
       </div>
     </header>
     <div id="flash"></div>
 
-    <main>{{template "main" .}}</main>
+    <div id="main-content">{{template "main" .}}</div>
 
     <script src="/static/js/htmx.min.js">
       // Basic JavaScript for demonstration (e.g., handling form submissions)
