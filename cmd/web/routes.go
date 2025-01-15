@@ -14,6 +14,8 @@ func (app *application) routes() http.Handler {
 	fileServer := http.FileServer(http.FS(ui.Files))
 	mux.Handle("GET /static/", fileServer)
 
+	mux.HandleFunc("GET /ping", ping)
+
 	mux.HandleFunc("/", app.home)
 	mux.HandleFunc("POST /contact/post", app.contactMe)
 	mux.HandleFunc("GET /form", app.showForm)

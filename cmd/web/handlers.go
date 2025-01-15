@@ -17,12 +17,11 @@ type ContactCreateForm struct {
 	FieldErrors map[string]string
 }
 
-func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		app.notFound(w)
-		return
-	}
+func ping(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("OK"))
+}
 
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	form := ContactCreateForm{}
 	data := app.newTemplateData(r)
 	data.Form = form
@@ -77,6 +76,11 @@ func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.infoLog.Printf("%v created and saved successfully!", contact)
+
+	err = app.mailer.Send("hello@example.com", "request_received.tmpl", nil)
+	if err != nil {
+		app.serverError(w, err)
+	}
 
 	data := app.newTemplateData(r)
 	data.Form = ContactCreateForm{}

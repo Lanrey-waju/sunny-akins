@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/tls"
 	"database/sql"
 	"flag"
 	"fmt"
@@ -16,13 +15,22 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/Lanrey-waju/sunny-akins/internal/database"
+	"github.com/Lanrey-waju/sunny-akins/internal/mailer"
 )
 
 // config will hold environment specific variables
 type config struct {
 	port int
+	env  string
 	db   struct {
 		dsn string
+	}
+	smtp struct {
+		host     string
+		port     int
+		username string
+		password string
+		sender   string
 	}
 }
 
@@ -32,6 +40,7 @@ type application struct {
 	infoLog       *log.Logger
 	db            *database.Queries
 	templateCache map[string]*template.Template
+	mailer        mailer.Mailer
 }
 
 // openDB opens and verifies a connection to a database
@@ -69,6 +78,14 @@ func main() {
 
 	flag.IntVar(&cfg.port, "port", port, "API server port")
 	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("SUNNY_DSN"), "PostgreSQL DSN")
+	flag.StringVar(&cfg.env, "env", "development", "Environment(development|staging|production)")
+
+	// smtp server config settings
+	flag.StringVar(&cfg.smtp.host, "smtp-host", "smtp.mailtrap.io", "SMTP host")
+	flag.IntVar(&cfg.smtp.port, "smtp-port", 2525, "SMTP port")
+	flag.StringVar(&cfg.smtp.username, "smtp-username", "58989729b79228", "SMTP username")
+	flag.StringVar(&cfg.smtp.password, "smtp-password", os.Getenv("SMTP_PASSWORD"), "SMTP password")
+	flag.StringVar(&cfg.smtp.sender, "smtp-sender", "from@example.com", "SMTP sender")
 
 	flag.Parse()
 
@@ -87,28 +104,32 @@ func main() {
 		errorLog.Fatalln(err)
 	}
 
+	mailer := mailer.New(
+		cfg.smtp.host,
+		cfg.smtp.port,
+		cfg.smtp.username,
+		cfg.smtp.password,
+		cfg.smtp.sender,
+	)
+
 	app := &application{
 		config:        cfg,
 		errorLog:      errorLog,
 		infoLog:       infoLog,
 		db:            dbQueries,
 		templateCache: templateCache,
-	}
-
-	tlsConfig := &tls.Config{
-		CurvePreferences: []tls.CurveID(tls.X25519, tls.CurveP256),
+		mailer:        mailer,
 	}
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.port),
 		ErrorLog:     errorLog,
 		Handler:      app.routes(),
-		TLSConfig:    tlsConfig,
 		IdleTimeout:  time.Minute,
-		ReadTimeout:  5 * time.Second,
+		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	infoLog.Printf("Starting server on %s", srv.Addr)
-	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+	infoLog.Printf("Starting %s server on %s", cfg.env, srv.Addr)
+	err = srv.ListenAndServe()
 	errorLog.Fatal(err)
 }
