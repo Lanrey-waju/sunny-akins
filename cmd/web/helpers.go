@@ -74,9 +74,13 @@ func (app *application) renderPartial(
 }
 
 func (app *application) background(fn func()) {
+	app.wg.Add(1)
+
 	go func() {
 		// recover any background panic
 		defer func() {
+			defer app.wg.Done()
+
 			if err := recover(); err != nil {
 				app.errorLog.Print(err)
 			}

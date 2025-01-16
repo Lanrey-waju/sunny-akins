@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"sync"
 	"text/template"
 	"time"
 
@@ -39,6 +40,7 @@ type application struct {
 	db            *database.Queries
 	templateCache map[string]*template.Template
 	mailer        mailer.Mailer
+	wg            sync.WaitGroup
 }
 
 // openDB opens and verifies a connection to a database
