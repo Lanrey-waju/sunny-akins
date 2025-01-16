@@ -72,3 +72,16 @@ func (app *application) renderPartial(
 		app.serverError(w, err)
 	}
 }
+
+func (app *application) background(fn func()) {
+	go func() {
+		// recover any background panic
+		defer func() {
+			if err := recover(); err != nil {
+				app.errorLog.Print(err)
+			}
+		}()
+		// run the arbitrary background task
+		fn()
+	}()
+}

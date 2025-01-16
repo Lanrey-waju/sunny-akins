@@ -77,10 +77,12 @@ func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 
 	app.infoLog.Printf("%v created and saved successfully!", contact)
 
-	err = app.mailer.Send("hello@example.com", "request_received.tmpl", nil)
-	if err != nil {
-		app.serverError(w, err)
-	}
+	app.background(func() {
+		err = app.mailer.Send("hello@example.com", "request_received.tmpl", nil)
+		if err != nil {
+			app.errorLog.Print(err)
+		}
+	})
 
 	data := app.newTemplateData(r)
 	data.Form = ContactCreateForm{}
