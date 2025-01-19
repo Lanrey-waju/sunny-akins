@@ -51,7 +51,9 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 
 	w.WriteHeader(status)
 
-	buf.WriteTo(w)
+	if _, err := buf.WriteTo(w); err != nil {
+		app.serverError(w, err)
+	}
 }
 
 func (app *application) renderPartial(

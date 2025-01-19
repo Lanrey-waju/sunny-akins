@@ -17,8 +17,11 @@ type ContactCreateForm struct {
 	FieldErrors map[string]string
 }
 
-func ping(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("OK"))
+func (app *application) ping(w http.ResponseWriter, r *http.Request) {
+	_, err := w.Write([]byte("OK"))
+	if err != nil {
+		app.serverError(w, err)
+	}
 }
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
