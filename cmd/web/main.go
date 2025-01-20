@@ -70,14 +70,14 @@ func main() {
 
 	cfg := config{}
 
-	portString := os.Getenv("SUNNY_PORT")
+	portString := os.Getenv("PORT")
 	port, err := strconv.Atoi(portString)
 	if err != nil {
 		errorLog.Fatalf("unable to convert port string to int: %s", err)
 	}
 
 	flag.IntVar(&cfg.port, "port", port, "API server port")
-	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("SUNNY_DSN"), "PostgreSQL DSN")
+	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("DATABASE_URL"), "PostgreSQL DSN")
 	flag.StringVar(&cfg.env, "env", "development", "Environment(development|staging|production)")
 
 	// smtp server config settings
