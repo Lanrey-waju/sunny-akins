@@ -1,0 +1,20 @@
+FROM golang:1.23-alpine AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN go mod download
+RUN go mod verify
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o migrate ./cmd/migrate/.
+
+FROM gcr.io/distroless/static-debian11
+
+COPY --from=builder /app/migrate /app/migrate
+
+COPY sql/schema /app/sql/schema
+
+USER nonroot:nonroot
+
+ENTRYPOINT [ "/app/migrate" ]
