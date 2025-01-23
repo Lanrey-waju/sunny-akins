@@ -78,12 +78,12 @@ func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.infoLog.Printf("%v created and saved successfully!", contact)
+	app.config.InfoLog.Printf("%v created and saved successfully!", contact)
 
 	app.background(func() {
 		err = app.mailer.Send("hello@example.com", "request_received.tmpl", nil)
 		if err != nil {
-			app.errorLog.Print(err)
+			app.config.ErrorLog.Print(err)
 		}
 	})
 

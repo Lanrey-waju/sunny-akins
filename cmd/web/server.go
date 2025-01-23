@@ -13,8 +13,8 @@ import (
 
 func (app *application) serve() error {
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%d", app.config.port),
-		ErrorLog:     app.errorLog,
+		Addr:         fmt.Sprintf(":%d", app.config.Port),
+		ErrorLog:     app.config.ErrorLog,
 		Handler:      app.routes(),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
@@ -30,7 +30,7 @@ func (app *application) serve() error {
 
 		s := <-quit
 
-		app.infoLog.Printf("shutting down server...: %v", s.String())
+		app.config.InfoLog.Printf("shutting down server...: %v", s.String())
 
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
@@ -40,13 +40,13 @@ func (app *application) serve() error {
 			shutdownError <- err
 		}
 
-		app.infoLog.Println("completing background tasks...")
+		app.config.InfoLog.Println("completing background tasks...")
 
 		app.wg.Wait()
 		shutdownError <- nil
 	}()
 
-	app.infoLog.Printf("Starting %s server on %s", app.config.env, srv.Addr)
+	app.config.InfoLog.Printf("Starting %s server on %s", app.config.Env, srv.Addr)
 
 	err := srv.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {
@@ -58,7 +58,7 @@ func (app *application) serve() error {
 		return err
 	}
 
-	app.infoLog.Printf("stopped server... addr: %v", srv.Addr)
+	app.config.InfoLog.Printf("stopped server... addr: %v", srv.Addr)
 
 	return nil
 }

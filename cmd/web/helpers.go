@@ -10,8 +10,8 @@ import (
 
 func (app *application) serverError(w http.ResponseWriter, err error) {
 	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
-	if err := app.errorLog.Output(2, trace); err != nil {
-		app.errorLog.Fatal(err)
+	if err := app.config.ErrorLog.Output(2, trace); err != nil {
+		app.config.ErrorLog.Fatal(err)
 	}
 
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -84,7 +84,7 @@ func (app *application) background(fn func()) {
 			defer app.wg.Done()
 
 			if err := recover(); err != nil {
-				app.errorLog.Print(err)
+				app.config.ErrorLog.Print(err)
 			}
 		}()
 		// run the arbitrary background task

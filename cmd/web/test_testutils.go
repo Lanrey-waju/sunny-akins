@@ -6,12 +6,16 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/Lanrey-waju/sunny-akins/internal/config"
 )
 
 func newTestApplication(t *testing.T) *application {
 	return &application{
-		infoLog:  log.New(io.Discard, "", 0),
-		errorLog: log.New(io.Discard, "", 0),
+		config: config.Config{
+			InfoLog:  log.New(io.Discard, "", 0),
+			ErrorLog: log.New(io.Discard, "", 0),
+		},
 	}
 }
 
