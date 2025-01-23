@@ -16,12 +16,16 @@ services:
 
   db:
     image: postgres:17
+    env_file:
+      - ./.env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
       MIGRATIONS_PASSWORD: ${MIGRATIONS_PASSWORD}
       SUNNY_PASSWORD: ${SUNNY_PASSWORD}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_USERNAME: ${SMTP_USERNAME}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
