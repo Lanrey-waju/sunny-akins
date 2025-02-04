@@ -30,3 +30,4 @@ tmp/main
 ui/static/img
 tls/
 cmd/web/tmp/*
+package-lock.json

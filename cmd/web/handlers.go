@@ -85,6 +85,7 @@ func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			app.config.ErrorLog.Print(err)
 		}
+		app.config.InfoLog.Println("Email Sent Successfully")
 	})
 
 	data := app.newTemplateData(r)

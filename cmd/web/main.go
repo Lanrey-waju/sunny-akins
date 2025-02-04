@@ -30,20 +30,33 @@ func main() {
 		cfg.ErrorLog.Fatalf("unable to convert port string to int: %s", err)
 	}
 
+	smtpPortString := os.Getenv("PORT")
+	SMTP_PORT, err := strconv.Atoi(smtpPortString)
+	if err != nil {
+		cfg.ErrorLog.Fatalf("unable to convert smtp port string to int: %s", err)
+	}
+
 	flag.IntVar(&cfg.Port, "port", port, "API server port")
 	flag.StringVar(&cfg.Env, "env", "development", "Environment(development|staging|production)")
 	flag.StringVar(&cfg.DB.Dsn, "db-dsn", os.Getenv("DATABASE_URL"), "PostgreSQL DSN")
 	fmt.Println(cfg.DB.Dsn)
 
 	// smtp server config settings
-	flag.StringVar(&cfg.Smtp.Host, "smtp-host", "smtp.mailtrap.io", "SMTP host")
-	flag.IntVar(&cfg.Smtp.Port, "smtp-port", 2525, "SMTP port")
-	flag.StringVar(&cfg.Smtp.Username, "smtp-username", "58989729b79228", "SMTP username")
+	flag.StringVar(&cfg.Smtp.Host, "smtp-host", os.Getenv("SMTP_HOST"), "SMTP host")
+	flag.IntVar(&cfg.Smtp.Port, "smtp-port", SMTP_PORT, "SMTP port")
+	flag.StringVar(&cfg.Smtp.Username, "smtp-username", os.Getenv("SMTP_USERNAME"), "SMTP username")
 	flag.StringVar(&cfg.Smtp.Password, "smtp-password", os.Getenv("SMTP_PASSWORD"), "SMTP password")
 	flag.StringVar(&cfg.Smtp.Sender, "smtp-sender", "from@example.com", "SMTP sender")
 
 	flag.Parse()
 
+	fmt.Printf(
+		"%v, %v, %v, %v",
+		cfg.Smtp.Username,
+		cfg.Smtp.Host,
+		cfg.Smtp.Password,
+		cfg.Smtp.Sender,
+	)
 	// initialize a new template cache
 	templateCache, err := newTemplateCache()
 	if err != nil {
