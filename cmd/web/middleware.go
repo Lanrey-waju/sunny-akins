@@ -8,7 +8,10 @@ import (
 func secureHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Security-Policy",
-			"default-src 'self'; style-src 'self' 'unsafe-inline' cdn.tailwindcss.com fonts.googleapis.com; script-src 'self' cdn.tailwindcss.com; font-src fonts.gstatic.com")
+			"default-src 'self'; "+
+				"style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; "+
+				"script-src 'self' https://cdn.tailwindcss.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'; "+
+				"font-src https://fonts.gstatic.com")
 		w.Header().Set("Referrer-Policy", "origin-when-cross=origin")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("X-Frame-Options", "deny")
