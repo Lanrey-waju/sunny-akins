@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="htmx-config" content='("settitleoninnerhtml":true)' />
+    <meta name="htmx-config" content='{"settitleoninnerhtml": true}' />
     <title>{{template "title" .}} - Sunny Akins</title>
     <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,13 +20,10 @@
 
     <div id="main-content">{{template "main" .}}</div>
 
-    <script src="/static/js/htmx.min.js">
-      // Basic JavaScript for demonstration (e.g., handling form submissions)
-    </script>
+    <footer class="bg-gray-800 text-white py-4 text-center">
+      <p>&copy; {{.CurrentYear}} Your Electrician</p>
+    </footer>
+    <script src="/static/js/htmx.min.js"></script>
   </body>
-
-  <footer class="bg-gray-800 text-white py-4 text-center">
-    <p>&copy; {{.CurrentYear}} Your Electrician</p>
-  </footer>
 </html>
 {{end}}
