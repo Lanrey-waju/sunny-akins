@@ -16,11 +16,13 @@ func (app *application) routes() http.Handler {
 
 	mux.HandleFunc("GET /ping", app.ping)
 
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("POST /contact/post", app.contactMe)
+	dynamic := alice.New(app.sessionManager.LoadAndSave)
+
+	mux.Handle("GET /", dynamic.ThenFunc(app.home))
+	mux.Handle("POST /contact/post", dynamic.ThenFunc(app.contactMe))
 	mux.HandleFunc("GET /form", app.showForm)
 	mux.HandleFunc("GET /close-flash", app.closeFlashMessage)
-	mux.HandleFunc("GET /about", app.aboutPage)
+	mux.Handle("GET /about", dynamic.ThenFunc(app.aboutPage))
 
 	standard := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
 

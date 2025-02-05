@@ -12,6 +12,8 @@ require (
 )
 
 require (
+	github.com/alexedwards/scs/postgresstore v0.0.0-20240316134038-7e11d57e8885 // indirect
+	github.com/alexedwards/scs/v2 v2.8.0 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect

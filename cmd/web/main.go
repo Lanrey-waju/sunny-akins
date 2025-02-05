@@ -7,18 +7,22 @@ import (
 	"strconv"
 	"sync"
 	"text/template"
+	"time"
 
 	"github.com/Lanrey-waju/sunny-akins/internal/config"
 	"github.com/Lanrey-waju/sunny-akins/internal/database"
 	"github.com/Lanrey-waju/sunny-akins/internal/mailer"
+	"github.com/alexedwards/scs/postgresstore"
+	"github.com/alexedwards/scs/v2"
 )
 
 type application struct {
-	config        config.Config
-	db            *database.Queries
-	templateCache map[string]*template.Template
-	mailer        mailer.Mailer
-	wg            sync.WaitGroup
+	config         config.Config
+	db             *database.Queries
+	templateCache  map[string]*template.Template
+	mailer         mailer.Mailer
+	sessionManager *scs.SessionManager
+	wg             sync.WaitGroup
 }
 
 func main() {
@@ -51,7 +55,7 @@ func main() {
 	flag.Parse()
 
 	fmt.Printf(
-		"%v, %v, %v, %v",
+		"%v, %v, %v, %v\n",
 		cfg.Smtp.Username,
 		cfg.Smtp.Host,
 		cfg.Smtp.Password,
@@ -78,11 +82,16 @@ func main() {
 
 	dbQueries := database.New(db)
 
+	sessionManager := scs.New()
+	sessionManager.Store = postgresstore.New(db)
+	sessionManager.Lifetime = 12 * time.Second
+
 	app := &application{
-		config:        *cfg,
-		db:            dbQueries,
-		templateCache: templateCache,
-		mailer:        mailer,
+		config:         *cfg,
+		db:             dbQueries,
+		templateCache:  templateCache,
+		mailer:         mailer,
+		sessionManager: sessionManager,
 	}
 
 	err = app.serve()
