@@ -25,13 +25,14 @@
     <p>Get in touch for a free quote!</p>
     <button
       @click="open = !open"
+      x-text="open ? 'Hide Form' : 'Get a quote'"
       type="button"
       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
     >
       Get a Quote
     </button>
   </div>
-  <div x-show="open" id="formContainer">
+  <div x-show="open" x-transition id="formContainer">
     <div class="w-full max-w-md mx-auto">
       <form
         class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
