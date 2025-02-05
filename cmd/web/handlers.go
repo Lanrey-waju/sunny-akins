@@ -26,8 +26,11 @@ func (app *application) ping(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	form := ContactCreateForm{}
+	flash := app.sessionManager.PopString(r.Context(), "flash")
+
 	data := app.newTemplateData(r)
 	data.Form = form
+	data.Flash = flash
 
 	if r.Header.Get("HX-Request") == "true" {
 		app.renderPartial(w, "index.html", "main", data)
@@ -88,10 +91,13 @@ func (app *application) contactMe(w http.ResponseWriter, r *http.Request) {
 		app.config.InfoLog.Println("Email Sent Successfully")
 	})
 
-	data := app.newTemplateData(r)
-	data.Form = ContactCreateForm{}
-	data.Flash = "Thank You! We will get in touch."
-	app.renderPartial(w, "index.html", "flash", data)
+	// data := app.newTemplateData(r)
+	// data.Form = ContactCreateForm{}
+	// data.Flash = "Thank You! We will get in touch."
+	// app.renderPartial(w, "index.html", "flash", data)
+	app.sessionManager.Put(r.Context(), "flash", "Thank You! We will get in touch.")
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (app *application) showForm(w http.ResponseWriter, r *http.Request) {

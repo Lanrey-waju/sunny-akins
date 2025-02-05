@@ -20,9 +20,18 @@
         {{template "nav" .}}
       </div>
     </header>
-    <div id="flash"></div>
 
-    <div id="main-content">{{template "main" .}}</div>
+    <div id="main-content">
+      <!-- display flash message if available -->
+      {{with .Flash}}
+      <div
+        class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md relative"
+        role="alert"
+      >
+        {{.}}
+      </div>
+      {{end}} {{template "main" .}}
+    </div>
 
     <footer class="bg-gray-800 text-white py-4 text-center">
       <p>&copy; {{.CurrentYear}} Your Electrician</p>
