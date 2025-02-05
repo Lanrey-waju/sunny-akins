@@ -13,6 +13,11 @@ services:
     networks:
       - app-network
     command: ["./server"]
+    develop:
+      watch:
+        - action: rebuild
+          path: ./cmd
+          target: /app/cmd
 
   db:
     image: postgres:17
